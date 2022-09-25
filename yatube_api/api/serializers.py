@@ -1,8 +1,6 @@
+from posts.models import Comment, Follow, Group, Post, User
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-
-
-from posts.models import Comment, Post, Group, Follow
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -29,7 +27,25 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Group
 
+
 class FollowSerializer(serializers.ModelSerializer):
+
+    user = SlugRelatedField(
+        slug_field="username",
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault()
+    )
+
+    following = SlugRelatedField(
+        slug_field="username",
+        queryset=User.objects.all()
+    )
+
+    def validate_following(self, following):
+        user = self.context['request'].user
+        if user == following:
+            raise serializers.ValidationError('You cannot follow yourself')
+        return following
 
     class Meta:
         fields = '__all__'
@@ -37,5 +53,5 @@ class FollowSerializer(serializers.ModelSerializer):
         validators = [
             serializers.UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
-                fields=('name', 'owner')),
+                fields=('user', 'following')),
         ]
