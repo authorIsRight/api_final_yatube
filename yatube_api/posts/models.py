@@ -26,6 +26,10 @@ class Post(models.Model):
         related_name="posts", blank=True, null=True
     )
 
+# c добавлением Мета валится тест на пагинацию
+    # class Meta:
+    # ordering = ['-pub_date']
+
     def __str__(self):
         return self.text
 
@@ -41,12 +45,6 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
-    class Meta:
-        ordering = ['-user']
-        verbose_name_plural = 'Подписки'
-        verbose_name = 'Подписка'
-        UniqueConstraint(name='follower_follows',
-                         fields=['user', 'following'])
 
     # кто подписан
     user = models.ForeignKey(
@@ -62,3 +60,10 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор'
     )
+
+    class Meta:
+        ordering = ['-user']
+        verbose_name_plural = 'Подписки'
+        verbose_name = 'Подписка'
+        UniqueConstraint(name='follower_follows',
+                         fields=['user', 'following'])
