@@ -1,11 +1,8 @@
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, SAFE_METHODS
 
 
-# оставил только один пермишн, изменил в settings на IsAuthenticatedOrReadOnly
-class IsAuthOrAuth(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        return request.user.is_authenticated
+class IsAuthOrAuth(IsAuthenticatedOrReadOnly):
 
     def has_object_permission(self, request, view, obj):
-        return obj.author == request.user
+        return (request.method in SAFE_METHODS
+                or obj.author == request.user)
