@@ -4,10 +4,12 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+from api.permissions import IsAuthOrAuth
+from api.serializers import (CommentSerializer,
+                             FollowSerializer,
+                             GroupSerializer,
+                             PostSerializer)
 from posts.models import Group, Post
-from .permissions import IsAuthOrAuth
-from .serializers import (CommentSerializer, FollowSerializer, GroupSerializer,
-                          PostSerializer)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -47,7 +49,7 @@ class CreateRetrieveViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 @permission_classes([IsAuthenticated])
 class FollowViewSet(CreateRetrieveViewSet):
     serializer_class = FollowSerializer
-    permission_classes = (IsAuthOrAuth,)
+#    permission_classes = (IsAuthOrAuth,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
 
